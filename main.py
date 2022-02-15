@@ -1,5 +1,6 @@
 from time import sleep
 from turtle import *
+import random
 
 
 screen = Screen()       #object of Screen class
@@ -8,19 +9,12 @@ screen.title("Snake")   #game title
 screen.bgcolor("black") #background color
 screen.tracer(False) #to slow the animation
 
-
-# text_bar = Turtle()
-# text_bar.shape("square")
-# text_bar.penup()
-# text_bar.color("white")
-# text_bar.goto(-300,300)
-# text_bar.shapesize(2,60)
-
+score = 0
 score_text = Turtle()
 score_text.penup()
 score_text.goto(-250,270)
 score_text.color("red")
-score_text.write("Score:0",font=('Bradley Hand ITC', 20),align='center')
+score_text.write("Score:"+str(score),font=('Bradley Hand ITC', 20),align='center')
 score_text.hideturtle()
 
 
@@ -31,6 +25,8 @@ snake_head.color("white")
 snake_head.goto(0,0)
 snake_head.direction='up'
 
+snake_body = []
+snake_body.append(snake_head)
 
 food = Turtle()
 food.shape("circle")
@@ -40,19 +36,20 @@ food.color("white")
 food.goto(100,10)
 
 def move_up():
-    snake_head.direction='up'
-def move_down():
-    snake_head.direction='down'
-def move_right():
-    snake_head.direction='right'
-def move_left():
-    snake_head.direction='left'
+    if snake_head.direction != 'down': 
+        snake_head.direction='up'
 
-screen.listen()
-screen.onkeypress(move_up,'Up')
-screen.onkeypress(move_down,'Down')
-screen.onkeypress(move_right,'Right')
-screen.onkeypress(move_left,'Left')
+def move_down():
+    if snake_head.direction != 'up':
+        snake_head.direction='down'
+
+def move_right():
+    if snake_head.direction != 'left':
+        snake_head.direction='right'
+
+def move_left():
+    if snake_head.direction != 'right':
+        snake_head.direction='left'
 
 
 def snake_movement():
@@ -73,8 +70,40 @@ def snake_movement():
         x = x - 10
         snake_head.setx(x)    
 
+def food_eaten():
+    if snake_head.distance(food) < 10:
+        x = random.randint(-280,280)
+        y = random.randint(-280,280)
+        food.goto(x, y)
+        
+        body = Turtle()
+        body.shape("square")
+        body.shapesize(0.8)
+        body.penup()
+        body.color("white")
+        snake_body.append(body)
+        
+        global score
+        score = score + 1
+        score_text.clear()
+        score_text.write("Score:"+str(score),font=('Bradley Hand ITC', 20),align='center')
+        
+
+
+
+screen.listen()
+screen.onkeypress(move_up,'Up')
+screen.onkeypress(move_down,'Down')
+screen.onkeypress(move_right,'Right')
+screen.onkeypress(move_left,'Left')
+
 while True:
     screen.update()        
     snake_movement()
     sleep(0.1)
+    food_eaten()
 
+    for i in range(len(snake_body)-1,0,-1):
+        x = snake_body[i-1].xcor()
+        y = snake_body[i-1].ycor()
+        snake_body[i].goto(x,y)
