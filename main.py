@@ -78,7 +78,7 @@ def food_eaten():
         
         body = Turtle()
         body.shape("square")
-        body.shapesize(0.8)
+        body.shapesize(0.9)
         body.penup()
         body.color("white")
         snake_body.append(body)
@@ -87,7 +87,16 @@ def food_eaten():
         score = score + 1
         score_text.clear()
         score_text.write("Score:"+str(score),font=('Bradley Hand ITC', 20),align='center')
-        
+
+def boarders_exceed():
+    if snake_head.xcor() > 299 or snake_head.xcor() < -299 :
+        x = snake_head.xcor() * -1
+        y = snake_head.ycor()
+        snake_head.goto(x,y)
+    if snake_head.ycor() > 299 or snake_head.ycor() < -299 :
+        x = snake_head.xcor()
+        y = snake_head.ycor()* -1
+        snake_head.goto(x,y)
 
 
 
@@ -102,7 +111,7 @@ while True:
     snake_movement()
     sleep(0.1)
     food_eaten()
-
+    boarders_exceed()
     for i in range(len(snake_body)-1,0,-1):
         x = snake_body[i-1].xcor()
         y = snake_body[i-1].ycor()
