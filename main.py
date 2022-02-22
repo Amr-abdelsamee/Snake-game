@@ -10,7 +10,7 @@ screen.bgcolor("black") #background color
 screen.tracer(False) #to slow the animation
 
 initial_speed = 0.1
-max_speed = 0.015
+max_speed = 0.02
 game_speed = initial_speed
 
 score = 0
@@ -20,6 +20,14 @@ score_text.goto(-250,270)
 score_text.color("red")
 score_text.write("Score:"+str(score),font=('Bradley Hand ITC', 20),align='center')
 score_text.hideturtle()
+
+high_score = 0
+high_score_text = Turtle()
+high_score_text.penup()
+high_score_text.goto(-80,270)
+high_score_text.color("green")
+high_score_text.write("High Score:"+str(high_score),font=('Bradley Hand ITC', 20),align='center')
+high_score_text.hideturtle()
 
 
 snake_head = Turtle()
@@ -88,7 +96,6 @@ def food_eaten():
         body.hideturtle()
         global snake_body
         snake_body.append(body)
-        print("added and n-length: " + str(len(snake_body)))
         
         global score
         score = score + 1
@@ -100,8 +107,10 @@ def food_eaten():
 def game_difficulty():
     global game_speed
     global max_speed
-    if game_speed-(0.05*game_speed) != max_speed:
-        game_speed = game_speed-(0.05*game_speed)
+    global score
+    decrement = 0.01 * initial_speed
+    if game_speed - decrement != max_speed:
+        game_speed = game_speed - decrement
 
 def boarders_exceed():
     if snake_head.xcor() > 299 or snake_head.xcor() < -299 :
@@ -121,6 +130,7 @@ def reset_game():
         snake_body[i].hideturtle()
         del snake_body[i]
     
+    high_score_check()
     global score
     score = 0
     score_text.clear()
@@ -135,11 +145,17 @@ def reset_game():
 def body_hit():
         if(len(snake_body) >= 4 ):
             for i in range(len(snake_body)-1,3,-1):
-                print("index "+str(i))
                 if snake_body[i].distance(snake_head) < 10:
-                    print("hit on "+str(i))
                     reset_game()
                     break
+
+def high_score_check():
+    global score
+    global high_score
+    if score > high_score:
+        high_score = score
+        high_score_text.clear()
+        high_score_text.write("High Score:" + str(high_score),font=('Bradley Hand ITC', 20),align='center')
 
 screen.listen()
 screen.onkeypress(move_up,'Up')
@@ -147,17 +163,19 @@ screen.onkeypress(move_down,'Down')
 screen.onkeypress(move_right,'Right')
 screen.onkeypress(move_left,'Left')
 
-print("snake length: " + str(len(snake_body)))
+
 
 
 while True:
     screen.update()        
     snake_movement()
     sleep(game_speed)
+
+    print(game_speed)
     food_eaten()
     boarders_exceed()
     body_hit()
-    
+    print("speed: "+str(game_speed)+" speedperce: " + str((((initial_speed - max_speed) - (game_speed - max_speed))/(initial_speed - max_speed))*100 )+"%")
     
     #body movement
     if(len(snake_body) != 0):
