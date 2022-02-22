@@ -29,6 +29,13 @@ high_score_text.color("green")
 high_score_text.write("High Score:"+str(high_score),font=('Bradley Hand ITC', 20),align='center')
 high_score_text.hideturtle()
 
+speed_percentage = 0
+speed_percentage_text = Turtle()
+speed_percentage_text.penup()
+speed_percentage_text.goto(100,270)
+speed_percentage_text.color("yellow")
+speed_percentage_text.write("speed:"+str(speed_percentage)+"%",font=('Bradley Hand ITC', 20),align='center')
+speed_percentage_text.hideturtle()
 
 snake_head = Turtle()
 snake_head.shape("square")
@@ -101,16 +108,22 @@ def food_eaten():
         score = score + 1
         score_text.clear()
         score_text.write("Score:"+str(score),font=('Bradley Hand ITC', 20),align='center')
-
         game_difficulty()
 
 def game_difficulty():
     global game_speed
     global max_speed
     global score
+    global speed_percentage
+
     decrement = 0.01 * initial_speed
     if game_speed - decrement != max_speed:
         game_speed = game_speed - decrement
+        speed_percentage = (((initial_speed - max_speed) - (game_speed - max_speed))/(initial_speed - max_speed))*100 
+        speed_percentage = "{:.2f}".format(speed_percentage)
+        speed_percentage_text.clear()
+        speed_percentage_text.write("speed:"+str(speed_percentage)+"%",font=('Bradley Hand ITC', 20),align='center')
+        
 
 def boarders_exceed():
     if snake_head.xcor() > 299 or snake_head.xcor() < -299 :
@@ -141,6 +154,10 @@ def reset_game():
     global initial_speed
     global game_speed
     game_speed = initial_speed
+    global speed_percentage
+    speed_percentage = 0
+    speed_percentage_text.clear()
+    speed_percentage_text.write("speed:"+str(speed_percentage)+"%",font=('Bradley Hand ITC', 20),align='center')
 
 def body_hit():
         if(len(snake_body) >= 4 ):
@@ -170,12 +187,9 @@ while True:
     screen.update()        
     snake_movement()
     sleep(game_speed)
-
-    print(game_speed)
     food_eaten()
     boarders_exceed()
     body_hit()
-    print("speed: "+str(game_speed)+" speedperce: " + str((((initial_speed - max_speed) - (game_speed - max_speed))/(initial_speed - max_speed))*100 )+"%")
     
     #body movement
     if(len(snake_body) != 0):
