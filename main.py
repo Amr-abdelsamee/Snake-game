@@ -3,16 +3,17 @@ from turtle import *
 import random
 
 
-screen = Screen()       #object of Screen class
+screen = Screen()       # object of Screen class
 screen.setup(width=600, height=600)
-screen.title("Snake")   #game title
-screen.bgcolor("black") #background color
-screen.tracer(False) #to slow the animation
+screen.title("Snake")   # game title
+screen.bgcolor("black") # main screen background color
+screen.tracer(False)    # to slow the animation
 
 initial_speed = 0.1
 max_speed = 0.02
-game_speed = initial_speed
+game_speed = initial_speed  #sanke speed and get updated whenever the snake eat the food
 
+#score var
 score = 0
 score_text = Turtle()
 score_text.penup()
@@ -21,6 +22,7 @@ score_text.color("red")
 score_text.write("Score:"+str(score),font=('Bradley Hand ITC', 20),align='center')
 score_text.hideturtle()
 
+#high score for the label
 high_score = 0
 high_score_text = Turtle()
 high_score_text.penup()
@@ -29,6 +31,7 @@ high_score_text.color("green")
 high_score_text.write("High Score:"+str(high_score),font=('Bradley Hand ITC', 20),align='center')
 high_score_text.hideturtle()
 
+#speed percentage for the label
 speed_percentage = 0
 speed_percentage_text = Turtle()
 speed_percentage_text.penup()
@@ -37,6 +40,7 @@ speed_percentage_text.color("yellow")
 speed_percentage_text.write("speed:"+str(speed_percentage)+"%",font=('Bradley Hand ITC', 20),align='center')
 speed_percentage_text.hideturtle()
 
+#snake head
 snake_head = Turtle()
 snake_head.shape("square")
 snake_head.penup()
@@ -44,6 +48,7 @@ snake_head.color("white")
 snake_head.goto(0,0)
 snake_head.direction='up'
 
+#list to store the added body when food is eaten
 snake_body = []
 snake_body.append(snake_head)
 
@@ -57,19 +62,15 @@ food.goto(100,10)
 def move_up():
     if snake_head.direction != 'down': 
         snake_head.direction='up'
-
 def move_down():
     if snake_head.direction != 'up':
         snake_head.direction='down'
-
 def move_right():
     if snake_head.direction != 'left':
         snake_head.direction='right'
-
 def move_left():
     if snake_head.direction != 'right':
         snake_head.direction='left'
-
 
 def snake_movement():
     if snake_head.direction == 'up':
@@ -115,7 +116,6 @@ def game_difficulty():
     global max_speed
     global score
     global speed_percentage
-
     decrement = 0.01 * initial_speed
     if game_speed - decrement != max_speed:
         game_speed = game_speed - decrement
@@ -123,19 +123,18 @@ def game_difficulty():
         speed_percentage = "{:.2f}".format(speed_percentage)
         speed_percentage_text.clear()
         speed_percentage_text.write("speed:"+str(speed_percentage)+"%",font=('Bradley Hand ITC', 20),align='center')
-        
 
 def boarders_exceed():
     if snake_head.xcor() > 299 or snake_head.xcor() < -299 :
-        reset_game()
         # x = snake_head.xcor() * -1
         # y = snake_head.ycor()
         # snake_head.goto(x,y)
-    if snake_head.ycor() > 299 or snake_head.ycor() < -299 :
         reset_game()
+    if snake_head.ycor() > 299 or snake_head.ycor() < -299 :
         # x = snake_head.xcor()
         # y = snake_head.ycor() * -1
         # snake_head.goto(x,y)
+        reset_game()
 
 def reset_game():
     global snake_body
@@ -180,18 +179,16 @@ screen.onkeypress(move_down,'Down')
 screen.onkeypress(move_right,'Right')
 screen.onkeypress(move_left,'Left')
 
-
-
-
+# main operation
 while True:
-    screen.update()        
-    snake_movement()
-    sleep(game_speed)
-    food_eaten()
-    boarders_exceed()
-    body_hit()
+    screen.update() # check if a new direction is set       
+    snake_movement() # check where the snake should move
+    sleep(game_speed) # slow down the screen animation to observe the snakke movement
+    food_eaten()  # check if snake eat the food
+    boarders_exceed()  # check if the snake touch the boarders
+    body_hit() # check if the snake hit his body
     
-    #body movement
+    #body follow movement
     if(len(snake_body) != 0):
         for i in range(len(snake_body)-1,0,-1):
             x = snake_body[i-1].xcor()
